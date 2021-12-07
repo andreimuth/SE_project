@@ -1,18 +1,29 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <title>Whatsapp wannabe</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-<p><a href="/hello">Greet the world!</a></p>
+    <head>
+        <title>Whatsapp wannabe</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
 
-<form action="/hello" method="GET" id="nameForm">
-    <div>
-        <label for="nameField">How should the app call you?</label>
-        <input name="myName" id="nameField">
-        <button>Greet me!</button>
-    </div>
-</form>
-</body>
+    <body>
+
+        <h2>Login</h2>
+
+        <form action="/login" method="POST" id="loginForm">
+            <div>
+                <label for="username">Username: </label>
+                <input name="myUserName" id="username">
+            </div>
+
+            <div style="margin-top: 30px;">
+                <label for="password">Password: </label>
+                <input type="password" name="myPassword" id="password">
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button>Login</button>
+                <button style="margin-left: 15px;" formaction="/registerview" formmethod="get">Register</button>
+            </div>
+        </form>
+    </body>
 </html>

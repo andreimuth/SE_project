@@ -4,12 +4,11 @@
         <title>Whatsapp wannabe</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     </head>
-
     <body>
 
-        <h2>Login</h2>
+        <h2>Register</h2>
 
-        <form action="/login" method="POST" id="loginForm">
+        <form action="/register" method="POST" id="loginForm">
             <div>
                 <label for="username">Username: </label>
                 <input name="myUserName" id="username">
@@ -21,8 +20,12 @@
             </div>
 
             <div style="margin-top: 30px;">
-                <button>Login</button>
-                <button style="margin-left: 15px;" formaction="/registerview" formmethod="get">Register</button>
+                <label for="confirmPassword">Confirm password: </label>
+                <input type="password" name="confirmPassword" id="confirmPassword">
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button>Register</button>
             </div>
         </form>
     </body>
