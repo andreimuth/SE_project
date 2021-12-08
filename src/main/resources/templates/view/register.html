@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
     <head>
         <title>Whatsapp wannabe</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -22,6 +22,14 @@
             <div style="margin-top: 30px;">
                 <label for="confirmPassword">Confirm password: </label>
                 <input type="password" name="confirmPassword" id="confirmPassword">
+            </div>
+
+            <div th:if="${passwordIncorrect}" style = "margin-top: 30px;">
+                <label style = "color: red">Passwords don't match!</label>
+            </div>
+
+            <div th:if="${usernameTaken}" style = "margin-top: 30px;">
+                <label style = "color: red">Username is already taken!</label>
             </div>
 
             <div style="margin-top: 30px;">

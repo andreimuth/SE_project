@@ -1,5 +1,7 @@
 package wappchat.controller;
 
+import org.springframework.ui.Model;
+import wappchat.model.Server;
 import wappchat.model.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,9 +12,11 @@ import java.util.Objects;
 public class HomeController {
 
     ModelAndView modelAndView = new ModelAndView();
+    Server server = new Server();
 
     @RequestMapping("/")
     public ModelAndView welcome() {
+        server = server.deserialize();
         modelAndView.setViewName("view/index");
         return modelAndView;
     }
@@ -22,7 +26,7 @@ public class HomeController {
                            @RequestParam(value = "myPassword", defaultValue = "") String password) {
         User user = new User(username, password);
         modelAndView.addObject(user);
-        return String.format("Hello %s!", password);
+        return String.format("Hello %s!", username);
     }
 
     @GetMapping("/registerview")
@@ -32,14 +36,25 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@RequestParam(value = "myUserName", defaultValue = "") String username,
+    public ModelAndView register(@RequestParam(value = "myUserName", defaultValue = "") String username,
                            @RequestParam(value = "myPassword", defaultValue = "") String password,
                            @RequestParam(value = "confirmPassword", defaultValue = "") String confirmPassowrd) {
-        if(!Objects.equals(password, confirmPassowrd)) {
-            return "";
+        if(!password.equals(confirmPassowrd)) {
+            modelAndView.addObject("passwordIncorrect", true);
+            modelAndView.setViewName("view/register");
+            return modelAndView;
         }
-        User user = new User(username, password);
-        modelAndView.addObject(user);
-        return String.format("Hello %s!", password);
+
+        if(server.getUsers().containsKey(username)) {
+            modelAndView.addObject("usernameTaken", true);
+            modelAndView.setViewName("view/register");
+            return modelAndView;
+        }
+
+        server.getUsers().put(username, new User(username, password));
+        server.serialize();
+
+        modelAndView.setViewName("view/register");
+        return modelAndView;
     }
 }
