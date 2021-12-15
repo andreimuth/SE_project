@@ -1,0 +1,69 @@
+body {
+    background: linear-gradient(120deg, #02c168, #fd31cd);
+    overflow: hidden;
+    height: 100vh;
+    font-family: Verdana, Helvetica, serif;
+}
+
+form {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+form h2 {
+    margin-top: -10px;
+}
+
+.margin-top {
+    margin-top: 30px;
+}
+
+.text-field {
+    margin-top: 10px;
+    display: block;
+    width:100%;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+button {
+    background-color: #EA4C89;
+    border-radius: 8px;
+    border-style: none;
+    box-sizing: border-box;
+    width: 100px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    margin: 0;
+    outline: none;
+    padding: 10px 16px;
+    position: relative;
+    text-align: center;
+}
+
+.app-title {
+    color: #fff;
+    top: 10%;
+    left: 44%;
+    position: absolute
+}
+
+button:hover {
+    background-color: #F082AC;
+}

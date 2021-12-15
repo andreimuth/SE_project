@@ -1,32 +1,37 @@
 package wappchat.controller;
 
-import org.springframework.ui.Model;
 import wappchat.model.Server;
 import wappchat.model.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Objects;
-
 @RestController
 public class HomeController {
-
+    
     ModelAndView modelAndView = new ModelAndView();
     Server server = new Server();
 
     @RequestMapping("/")
     public ModelAndView welcome() {
-        server = server.deserialize();
+        modelAndView.addObject("invalidInput", false);
         modelAndView.setViewName("view/index");
         return modelAndView;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String sayHello(@RequestParam(value = "myUserName", defaultValue = "") String username,
+    public ModelAndView login(@RequestParam(value = "myUserName", defaultValue = "") String username,
                            @RequestParam(value = "myPassword", defaultValue = "") String password) {
-        User user = new User(username, password);
-        modelAndView.addObject(user);
-        return String.format("Hello %s!", username);
+        if(server.getUsers().containsKey(username) && server.getUsers().get(username).getPassword().equals(password)) {
+            modelAndView.setViewName("view/index");
+            modelAndView.addObject("invalidInput", false);
+            modelAndView.setViewName("view/chat");
+            modelAndView.addObject("username", username);
+            return modelAndView;
+        }
+
+        modelAndView.addObject("invalidInput", true);
+        modelAndView.setViewName("view/index");
+        return modelAndView;
     }
 
     @GetMapping("/registerview")
@@ -38,8 +43,9 @@ public class HomeController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@RequestParam(value = "myUserName", defaultValue = "") String username,
                            @RequestParam(value = "myPassword", defaultValue = "") String password,
-                           @RequestParam(value = "confirmPassword", defaultValue = "") String confirmPassowrd) {
-        if(!password.equals(confirmPassowrd)) {
+                           @RequestParam(value = "confirmPassword", defaultValue = "") String confirmPassword) {
+
+        if(!password.equals(confirmPassword)) {
             modelAndView.addObject("passwordIncorrect", true);
             modelAndView.setViewName("view/register");
             return modelAndView;
@@ -51,10 +57,13 @@ public class HomeController {
             return modelAndView;
         }
 
+        modelAndView.addObject("passwordIncorrect", false);
+        modelAndView.addObject("usernameTaken", false);
+
         server.getUsers().put(username, new User(username, password));
         server.serialize();
 
-        modelAndView.setViewName("view/register");
+        modelAndView.setViewName("view/index");
         return modelAndView;
     }
 }

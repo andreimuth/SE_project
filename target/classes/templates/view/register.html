@@ -3,25 +3,29 @@
     <head>
         <title>Whatsapp wannabe</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../../static/styles/style.css" th:href="@{styles/style.css}">
     </head>
     <body>
 
-        <h2>Register</h2>
-
         <form action="/register" method="POST" id="loginForm">
-            <div>
+            <h2>Register</h2>
+            <div class="margin-top">
                 <label for="username">Username: </label>
-                <input name="myUserName" id="username">
+                <input name="myUserName" id="username" class="text-field">
             </div>
 
-            <div style="margin-top: 30px;">
+            <div class="margin-top">
                 <label for="password">Password: </label>
-                <input type="password" name="myPassword" id="password">
+                <input type="password" name="myPassword" id="password" class="text-field">
+            </div>
+
+            <div class="margin-top">
+                <label for="confirmPassword">Confirm password: </label>
+                <input type="password" name="confirmPassword" id="confirmPassword" class="text-field">
             </div>
 
             <div style="margin-top: 30px;">
-                <label for="confirmPassword">Confirm password: </label>
-                <input type="password" name="confirmPassword" id="confirmPassword">
+                <button>Register</button>
             </div>
 
             <div th:if="${passwordIncorrect}" style = "margin-top: 30px;">
@@ -30,10 +34,6 @@
 
             <div th:if="${usernameTaken}" style = "margin-top: 30px;">
                 <label style = "color: red">Username is already taken!</label>
-            </div>
-
-            <div style="margin-top: 30px;">
-                <button>Register</button>
             </div>
         </form>
     </body>

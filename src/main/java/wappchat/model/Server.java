@@ -11,6 +11,7 @@ public class Server implements Serializable {
 
     public Server() {
         users = new HashMap<>();
+
     }
 
     public HashMap<String, User> getUsers() {
@@ -23,6 +24,8 @@ public class Server implements Serializable {
             ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
             out.writeObject(this);
             out.flush();
+            out.close();
+            s.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,10 +34,12 @@ public class Server implements Serializable {
     public Server deserialize() {
         Server serverToReceive;
         try {
-            ServerSocket server = new ServerSocket(8000);
-            Socket s = server.accept();
+            ServerSocket serverSocket = new ServerSocket(8000);
+            Socket s = serverSocket.accept();
             ObjectInputStream in = new ObjectInputStream(s.getInputStream());
             serverToReceive = (Server) in.readObject();
+            in.close();
+            s.close();
         } catch (IOException | ClassNotFoundException e) {
             serverToReceive = new Server();
         }
