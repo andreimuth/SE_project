@@ -7,14 +7,13 @@ import java.util.HashMap;
 
 public class Server implements Serializable {
 
-    private HashMap<String, User> users;
+    private static HashMap<String, User> users;
 
     public Server() {
         users = new HashMap<>();
-
     }
 
-    public HashMap<String, User> getUsers() {
+    public static HashMap<String, User> getUsers() {
         return users;
     }
 

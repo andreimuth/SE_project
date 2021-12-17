@@ -47,10 +47,8 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-el:9.0.54" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.54" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.12" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.12" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.12" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.12" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.12" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.5.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:2.5.6" level="project" />
@@ -92,5 +90,9 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-devtools:2.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-websocket:5.3.13" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-messaging:5.3.13" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.12" level="project" />
   </component>
 </module>
