@@ -5,7 +5,7 @@ body {
     font-family: Verdana, Helvetica, serif;
 }
 
-form {
+#loginForm {
     top: 50%;
     left: 50%;
     position: absolute;
@@ -16,15 +16,11 @@ form {
     border-radius: 10px;
 }
 
-form h2 {
-    margin-top: -10px;
-}
-
 .margin-top {
     margin-top: 30px;
 }
 
-.text-field {
+#loginForm .text-field {
     margin-top: 10px;
     display: block;
     width:100%;
@@ -38,7 +34,7 @@ form h2 {
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-button {
+#loginButton {
     background-color: #EA4C89;
     border-radius: 8px;
     border-style: none;
@@ -66,4 +62,116 @@ button {
 
 button:hover {
     background-color: #F082AC;
+}
+
+.hide {
+    display: none;
+}
+
+#chatBox {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    margin: 50px 0 50px 0;
+    height: 80%;
+    width: 600px;
+    background: #fff;
+}
+
+#chatBox > #users {
+    overflow-y: auto;
+    overflow-x: hidden;
+    float: left;
+    height: 85%;
+    width: 30%;
+}
+
+#chatBox > #users a {
+    color: aqua;
+}
+
+#chatBox > #users a:active {
+    color: #ff0000;
+}
+
+#chatBox > #users a:focus {
+    color: #ff0000;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+}
+
+#chatForm {
+    position: absolute;
+    bottom: 2%;
+    width: 95%;
+    margin-left: 15px;
+
+}
+
+.textarea-container {
+    position: relative;
+}
+
+.textarea-container textarea {
+    width: 50%;
+    height: 55px;
+    box-sizing: border-box;
+    float: left;
+}
+.textarea-container button {
+    float: left;
+    height: 55px;
+    background-color: #EA4C89;
+    border-style: none;
+    box-sizing: border-box;
+    width: 90px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 0 10px;
+    outline: none;
+    padding: 10px 16px;
+}
+
+.message_send {
+    margin: 10px 10px auto;
+    border-radius: 25px;
+    padding: 10px;
+    position: relative;
+    color: black;
+}
+
+#chatBox > #chat_div {
+    float: right;
+    height: 100%;
+    width: 70%;
+}
+
+#messages {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 80%;
+    width: 100%;
+}
+
+.message_content {
+    margin-top: 25px;
+}
+
+.message_sender {
+    float: right;
+    display: flex;
+    margin-top: -35px;
+}
+
+.message_time {
+    display: flex;
+    margin-top: 0;
 }

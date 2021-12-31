@@ -4,30 +4,287 @@
         <title>Whatsapp wannabe</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" href="../../static/styles/style.css" th:href="@{styles/style.css}">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     </head>
 
-    <body>
-        <h1 class="app-title">Chat app</h1>
-        <form action="/login" method="POST" id="loginForm">
-            <h2>Login</h2>
-            <div>
-                <label for="username">Username: </label>
-                <input name="myUserName" id="username" class="text-field">
-            </div>
+<body>
+<form id="loginForm">
+    <div>
+        <label for="username">Username: </label>
+        <input name="username" id="username" class="text-field">
+    </div>
 
-            <div class="margin-top">
-                <label for="password">Password: </label>
-                <input type="password" name="myPassword" id="password" class="text-field">
-            </div>
+    <div class="margin-top">
+        <button id="loginButton">Login</button>
+    </div>
 
-            <div class="margin-top">
-                <button>Login</button>
-                <button style="margin-left: 15px;" formaction="/registerview" formmethod="get">Register</button>
-            </div>
+    <div th:if="${username_exists}" id="username_taken">
+        <p style="color: red">Username is already taken</p>
+    </div>
+</form>
+<div>
+    <p class="hide" id="user"></p>
+</div>
+<div class="hide" id="chatBox">
 
-            <div th:if="${invalidInput}" style = "margin-top: 30px;">
-                <label style = "color: red">Incorrect username or password</label>
+    <div id="users">
+
+    </div>
+
+    <div id="chat_div">
+        <div id="messages"></div>
+        <form align="center" id="chatForm">
+            <div class="textarea-container">
+                <textarea type="text" id="chatMessage" placeholder="Write your message here"></textarea>
+                <button class="messageButton">Send message</button>
             </div>
         </form>
-    </body>
+    </div>
+</div>
+<script>
+    'use strict'
+    let stompClient
+    let user
+    const globalChat = 'Global'
+    let selectedUser = globalChat
+    const connect = (event) => {
+        user = document.querySelector('#username').value.trim()
+        $.get(
+            'http://localhost:8000/getAllUsers', function (response) {
+
+                if(!user) {
+                    alert("Please provide an username")
+                } else if(userExists(response)) {
+                    alert('Username already exists')
+                } else if(user.length > 12) {
+                    alert("Username too long")
+                } else if(user === globalChat) {
+                    alert('Please select another username')
+                } else {
+                    document.querySelector('#loginForm').classList.add('hide')
+                    document.querySelector('#user').classList.remove('hide')
+                    document.querySelector('#chatBox').classList.remove('hide')
+                    var usernameText = document.createTextNode(user)
+                    document.querySelector('#user').appendChild(usernameText)
+
+                    const socket = new SockJS('/chat')
+                    stompClient = Stomp.over(socket)
+                    stompClient.connect({}, onConnected, onError)
+                }
+            }
+        )
+        event.preventDefault()
+    }
+
+    function userExists(users) {
+        for(let i = 0; i < users.length; i++) {
+            if(users[i].username === user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const sendMessage = (event) => {
+        const messageIn = document.querySelector('#chatMessage')
+        const messageContent = messageIn.value.trim()
+
+        if(messageContent && stompClient) {
+            var today = new Date()
+            var hh = String(today.getHours())
+            var mm = String(today.getMinutes())
+
+            if(selectedUser === globalChat) {
+                let message = {
+                    content: messageContent,
+                    sender: user,
+                    date: createHourString(hh, mm),
+                    type: 'CHAT'
+                }
+                stompClient.send("/app/chat/send", {}, JSON.stringify(message))
+            } else {
+                let message = {
+                    content: messageContent,
+                    sender: user,
+                    receiver: selectedUser,
+                    date: createHourString(hh, mm),
+                    type: 'CHAT'
+                }
+                stompClient.send("/app/chat/sendPrivate/" + selectedUser, {}, JSON.stringify(message))
+            }
+            messageIn.value = ""
+        }
+        event.preventDefault()
+    }
+
+    const createHourString = (hh, mm) => {
+        if(hh < 10) {
+            hh = '0' + hh
+        }
+        if(mm < 10) {
+            mm = '0' + mm
+        }
+        return hh + ":" + mm
+    }
+
+    const onConnected = options => {
+        stompClient.subscribe('/topic/public', onMessageReceived)
+        stompClient.send("/app/chat/connect", {}, JSON.stringify({
+            sender: user,
+            date: '12:00',
+            content: user + ' connected',
+            type: 'CONNECTED'
+        }))
+    }
+
+    const onDisconnected = options => {
+        stompClient.unsubscribe('/topic/public')
+    }
+
+    const onMessageReceived = (payload) => {
+        const message = JSON.parse(payload.body)
+        if(message.type === 'CHAT') {
+            if(message.receiver && (message.sender === selectedUser || message.receiver === selectedUser)) {
+                appendMessage(message)
+            }
+
+            if(!message.receiver && selectedUser === globalChat) {
+                appendMessage(message)
+            }
+        }
+        else {
+            if(message.type === 'DISCONNECTED') {
+                onDisconnected()
+            }
+            appendUserStatus(message)
+            fetchUsers()
+        }
+    }
+
+    const fetchUsers = () => {
+        document.querySelector('#users').innerHTML = ''
+        let usersHTML = '<a href="#" onclick="selectUser(\'' + globalChat + '\')"> ' +
+            '<div><p>' + globalChat + '</p></div>'
+        $.get(
+            'http://localhost:8000/getAllUsers', function (response) {
+                const users = response
+                for(let i = 0; i < users.length; i++) {
+                    if (user === users[i].username) {
+                        continue
+                    }
+                    usersHTML = usersHTML + '<a href="#" onclick="selectUser(\'' + users[i].username + '\')"> ' +
+                        '<div><p>' + users[i].username + '</p></div>'
+                }
+                document.querySelector('#users').innerHTML = usersHTML
+            })
+    }
+
+    const selectUser = (selectedUsername) => {
+        if(selectedUsername === user) {
+            return
+        }
+        selectedUser = selectedUsername
+        document.querySelector('#messages').innerHTML = "";
+        $.get(
+            'http://localhost:8000/getUserMessages/' + user + '/' + selectedUsername, function (response) {
+                const messages = response
+                for(let i = 0; i < messages.length; i++) {
+                    if(messages[i].type === 'CHAT') {
+                        appendMessage(messages[i])
+                    } else {
+                        appendUserStatus(messages[i])
+                    }
+                }
+            }
+        )
+    }
+
+    const appendUserStatus = (message) => {
+        if (message.sender === user) {
+            return
+        }
+        let backgroundColor
+        if(message.type === 'CONNECTED') {
+            backgroundColor = '#008000'
+        } else {
+            if(selectedUser === message.sender) {
+                selectUser(globalChat)
+                return
+            }
+            backgroundColor = '#ff0000'
+        }
+        const chatCard = document.createElement('div')
+        chatCard.className = 'card-body'
+        chatCard.classList.add('d-flex')
+        chatCard.classList.add('justify-content-end')
+        chatCard.classList.add('mb-4')
+
+        const messageElem = document.createElement('div')
+        messageElem.className = 'message_send'
+
+        messageElem.style.backgroundColor = backgroundColor
+
+        const content = document.createElement('p')
+        content.className = 'message_content'
+        content.innerHTML = message.content
+
+        messageElem.appendChild(content)
+
+        chatCard.appendChild(messageElem)
+
+        document.querySelector('#messages').appendChild(chatCard)
+        document.querySelector('#messages').scrollTop = document.querySelector('#messages').scrollHeight
+    }
+
+    const appendMessage = (message) => {
+        const chatCard = document.createElement('div')
+        chatCard.className = 'card-body'
+        chatCard.classList.add('d-flex')
+        chatCard.classList.add('justify-content-end')
+        chatCard.classList.add('mb-4')
+
+        const messageElem = document.createElement('div')
+        messageElem.className = 'message_send'
+
+        if (message.sender === user) {
+            messageElem.style.backgroundColor = '#ABC'
+        } else {
+            messageElem.style.backgroundColor = '#fb681c'
+        }
+
+        const sender = document.createElement('p')
+        sender.className = 'message_sender'
+        const senderBold = document.createElement('b')
+        senderBold.innerHTML = message.sender
+        sender.appendChild(senderBold)
+
+        const content = document.createElement('p')
+        content.className = 'message_content'
+        content.innerHTML = message.content
+
+        const time = document.createElement('p')
+        time.className = 'message_time'
+        time.innerHTML = message.date
+
+        messageElem.appendChild(time)
+        messageElem.appendChild(sender)
+        messageElem.appendChild(content)
+
+        chatCard.appendChild(messageElem)
+
+        document.querySelector('#messages').appendChild(chatCard)
+        document.querySelector('#messages').scrollTop = document.querySelector('#messages').scrollHeight
+    }
+
+    const onError = (error) => {
+        alert('error')
+    }
+
+    document.querySelector('#loginForm').addEventListener('submit', connect, true)
+    document.querySelector('#chatForm').addEventListener('submit', sendMessage, true)
+</script>
+
+</body>
 </html>

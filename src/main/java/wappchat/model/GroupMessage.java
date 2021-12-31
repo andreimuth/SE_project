@@ -1,6 +1,9 @@
 package wappchat.model;
 
-public class GroupMessage extends Message {
+public class GroupMessage {
 
-    private Group receiver;
+    public GroupMessage() {
+        super();
+    }
+
 }

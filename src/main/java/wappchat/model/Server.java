@@ -4,44 +4,33 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.HashSet;
 
-public class Server implements Serializable {
+public class Server {
 
-    private static HashMap<String, User> users;
+    private static HashSet<User> users;
 
-    public Server() {
-        users = new HashMap<>();
-    }
-
-    public static HashMap<String, User> getUsers() {
+    public static HashSet<User> getUsers() {
+        if(users == null) {
+            users = new HashSet<>();
+        }
         return users;
     }
 
-    public void serialize() {
-        try {
-            Socket s = new Socket("localhost", 8000);
-            ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-            out.writeObject(this);
-            out.flush();
-            out.close();
-            s.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void addUser(User user) {
+        users.add(user);
     }
 
-    public Server deserialize() {
-        Server serverToReceive;
-        try {
-            ServerSocket serverSocket = new ServerSocket(8000);
-            Socket s = serverSocket.accept();
-            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-            serverToReceive = (Server) in.readObject();
-            in.close();
-            s.close();
-        } catch (IOException | ClassNotFoundException e) {
-            serverToReceive = new Server();
+    public static void removeUser(User user) {
+        users.remove(user);
+    }
+
+    public static User getUserByUsername(String username) {
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                return user;
+            }
         }
-        return serverToReceive;
+        return null;
     }
 }

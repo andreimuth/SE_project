@@ -2,6 +2,7 @@ package wappchat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import wappchat.model.Server;
 
 @SpringBootApplication
 public class WebApp {
